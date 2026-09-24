@@ -75,9 +75,11 @@ Start-Sleep -Seconds 2
 
 # Start Validator Client
 $valExe = Join-Path $ScriptDir "validator.exe"
+$valData = Join-Path $ScriptDir "validator-data"
 $walletDir = Join-Path $ScriptDir "validator-wallet"
 $pwdFile = Join-Path $ScriptDir "wallet_pass.txt"
 $valArgs = @(
+    "--datadir", $valData,
     "--wallet-dir", $walletDir,
     "--wallet-password-file", $pwdFile,
     "--beacon-rpc-provider", "127.0.0.1:4000",

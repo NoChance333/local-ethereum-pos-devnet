@@ -76,14 +76,21 @@ def main():
 
     geth_data = os.path.join(BASE_DIR, "geth-data")
     beacon_data = os.path.join(BASE_DIR, "beacon-data")
+    val_data = os.path.join(BASE_DIR, "validator-data")
     reset_mode = "--reset" in sys.argv
 
     # 4. Handle persistence vs clean reset
     if reset_mode:
-        print("Reset flag detected. Cleaning execution & beacon databases for fresh genesis...")
-        for p in [geth_data, beacon_data]:
+        print("Reset flag detected. Cleaning execution, beacon & validator databases for fresh genesis...")
+        for p in [geth_data, beacon_data, val_data]:
             if os.path.exists(p):
                 subprocess.run(["powershell", "-Command", f"Remove-Item -Recurse -Force '{p}'"], capture_output=True)
+        appdata_eth2 = os.path.expandvars(r"%LOCALAPPDATA%\Eth2\validator.db")
+        if os.path.exists(appdata_eth2):
+            try:
+                os.remove(appdata_eth2)
+            except Exception:
+                pass
 
     logs_dir = os.path.join(BASE_DIR, "logs")
     os.makedirs(logs_dir, exist_ok=True)
@@ -183,6 +190,7 @@ def main():
     pwd_file = os.path.join(BASE_DIR, "wallet_pass.txt")
     cmd_val = [
         val_exe,
+        "--datadir", val_data,
         "--wallet-dir", wallet_dir,
         "--wallet-password-file", pwd_file,
         "--beacon-rpc-provider", "127.0.0.1:4000",

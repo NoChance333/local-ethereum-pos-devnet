@@ -2,12 +2,12 @@
   "chainId": 12345,
   "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
   "contractAddress": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-  "deploymentTxHash": "335d017bff19c5224dcca5aab20023aa45a21aa6253d0414dca8226cef0fd41b",
-  "deploymentBlockNumber": 11,
-  "deploymentBlockHash": "b4b1f037da410f4c33e635a692c9997fcb61efc4511a858fe717c64aaa72793a",
+  "deploymentTxHash": "095d191b831477d8158c2ca4ec8bf0cd3fe6d038c31453a73e02ebaf781e71a6",
+  "deploymentBlockNumber": 9,
+  "deploymentBlockHash": "8478d17f4bb920fb191ea0228c2b4a1496e6ed08d9936ad0f5be4e2946c97661",
   "deploymentGasUsed": 134959,
-  "setTxHash": "595091a1cef5d0062f7b205adfdd237a1f1b9feec807bf99ce70912e92aa5e70",
-  "setBlockNumber": 12,
+  "setTxHash": "82c9ba9812f6e7b13ef6ddc18657606803c86a4fab26b056c33bfc84c0f01ff3",
+  "setBlockNumber": 10,
   "setGasUsed": 44896,
   "storedValue": 42069
 }
