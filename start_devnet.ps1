@@ -21,6 +21,10 @@ if (!(Test-Path $jwtFile)) {
 # Start Geth
 $gethExe = Join-Path $ScriptDir "geth.exe"
 $gethData = Join-Path $ScriptDir "geth-data"
+if (!(Test-Path $gethData)) {
+    Write-Host "Initializing Geth datadir from genesis.json..."
+    & $gethExe --datadir $gethData init (Join-Path $ScriptDir "genesis.json")
+}
 $gethArgs = @(
     "--datadir", $gethData,
     "--networkid", "12345",
@@ -63,8 +67,7 @@ $beaconArgs = @(
     "--suggested-fee-recipient", "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
     "--disable-staking-contract-check",
     "--subscribe-all-subnets",
-    "--minimum-peers-per-subnet", "0",
-    "--force-clear-db"
+    "--minimum-peers-per-subnet", "0"
 )
 $beaconProc = Start-Process -FilePath $beaconExe -ArgumentList $beaconArgs -RedirectStandardOutput (Join-Path $LogsDir "beacon.log") -RedirectStandardError (Join-Path $LogsDir "beacon_err.log") -PassThru
 Write-Host "Started Beacon Node (PID: $($beaconProc.Id))"

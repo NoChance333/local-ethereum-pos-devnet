@@ -74,47 +74,56 @@ def main():
     ensure_jwt(jwt_file)
     ensure_wallet()
 
-    # 4. Clean execution & beacon directories for clean genesis
-    print("Cleaning execution & beacon databases...")
-    for d in ["geth-data", "beacon-data"]:
-        p = os.path.join(BASE_DIR, d)
-        if os.path.exists(p):
-            subprocess.run(["powershell", "-Command", f"Remove-Item -Recurse -Force '{p}'"], capture_output=True)
+    geth_data = os.path.join(BASE_DIR, "geth-data")
+    beacon_data = os.path.join(BASE_DIR, "beacon-data")
+    reset_mode = "--reset" in sys.argv
+
+    # 4. Handle persistence vs clean reset
+    if reset_mode:
+        print("Reset flag detected. Cleaning execution & beacon databases for fresh genesis...")
+        for p in [geth_data, beacon_data]:
+            if os.path.exists(p):
+                subprocess.run(["powershell", "-Command", f"Remove-Item -Recurse -Force '{p}'"], capture_output=True)
 
     logs_dir = os.path.join(BASE_DIR, "logs")
     os.makedirs(logs_dir, exist_ok=True)
 
-    # 5. Generate Genesis
-    print("Generating Beacon & Geth PoS Genesis (with 12s delay)...")
     config_yaml = os.path.join(BASE_DIR, "config.yaml")
     genesis_ssz = os.path.join(BASE_DIR, "genesis.ssz")
     genesis_in = os.path.join(BASE_DIR, "genesis_in.json")
     genesis_out = os.path.join(BASE_DIR, "genesis.json")
 
-    cmd_genesis = [
-        prysmctl_exe, "testnet", "generate-genesis",
-        "--fork=deneb",
-        f"--chain-config-file={config_yaml}",
-        "--num-validators=64",
-        f"--output-ssz={genesis_ssz}",
-        f"--geth-genesis-json-in={genesis_in}",
-        f"--geth-genesis-json-out={genesis_out}",
-        "--genesis-time-delay=12"
-    ]
-    res = subprocess.run(cmd_genesis, capture_output=True, text=True)
-    if res.returncode != 0:
-        print("Genesis generation failed:\n", res.stderr)
-        sys.exit(1)
-    print("Genesis files created successfully.")
+    needs_genesis = reset_mode or (not os.path.exists(geth_data)) or (not os.path.exists(beacon_data))
 
-    # 6. Initialize Geth
-    print("Initializing Geth with custom genesis...")
-    geth_data = os.path.join(BASE_DIR, "geth-data")
-    cmd_geth_init = [geth_exe, "--datadir", geth_data, "init", genesis_out]
-    res2 = subprocess.run(cmd_geth_init, capture_output=True, text=True)
-    if res2.returncode != 0:
-        print("Geth initialization failed:\n", res2.stderr)
-        sys.exit(1)
+    if needs_genesis:
+        # 5. Generate Genesis
+        print("Generating Beacon & Geth PoS Genesis (with 12s delay)...")
+        cmd_genesis = [
+            prysmctl_exe, "testnet", "generate-genesis",
+            "--fork=deneb",
+            f"--chain-config-file={config_yaml}",
+            "--num-validators=64",
+            f"--output-ssz={genesis_ssz}",
+            f"--geth-genesis-json-in={genesis_in}",
+            f"--geth-genesis-json-out={genesis_out}",
+            "--genesis-time-delay=12"
+        ]
+        res = subprocess.run(cmd_genesis, capture_output=True, text=True)
+        if res.returncode != 0:
+            print("Genesis generation failed:\n", res.stderr)
+            sys.exit(1)
+        print("Genesis files created successfully.")
+
+        # 6. Initialize Geth
+        print("Initializing Geth with custom genesis...")
+        cmd_geth_init = [geth_exe, "--datadir", geth_data, "init", genesis_out]
+        res2 = subprocess.run(cmd_geth_init, capture_output=True, text=True)
+        if res2.returncode != 0:
+            print("Geth initialization failed:\n", res2.stderr)
+            sys.exit(1)
+    else:
+        print("Existing blockchain databases found! Resuming previous state (contracts & history preserved)...")
+        print("Tip: Use 'python run_devnet.py --reset' if you ever want to wipe and start from block 0.")
 
     f_geth = open(os.path.join(logs_dir, "geth.log"), "w")
     f_beacon = open(os.path.join(logs_dir, "beacon.log"), "w")
@@ -163,8 +172,7 @@ def main():
         "--suggested-fee-recipient", "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
         "--disable-staking-contract-check",
         "--subscribe-all-subnets",
-        "--minimum-peers-per-subnet", "0",
-        "--force-clear-db"
+        "--minimum-peers-per-subnet", "0"
     ]
     p_beacon = subprocess.Popen(cmd_beacon, stdout=f_beacon, stderr=subprocess.STDOUT)
     time.sleep(2)
