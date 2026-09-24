@@ -1,0 +1,26 @@
+# Executables & Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+*.part
+
+# Node Databases & State Folders
+geth-data/
+beacon-data/
+validator-data/
+validator-wallet/
+validator_keys/
+temp-geth-data/
+
+# Logs & Runtime PIDs
+logs/
+*.log
+pids.json
+
+# Local Python & OS Files
+__pycache__/
+*.py[cod]
+*$py.class
+.DS_Store
+Thumbs.db

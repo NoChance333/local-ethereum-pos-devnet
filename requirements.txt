@@ -1,0 +1,4 @@
+web3>=7.0.0
+py-solc-x>=2.0.0
+pycryptodome>=3.20.0
+py-ecc>=8.0.0

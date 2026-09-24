@@ -1,0 +1,55 @@
+{
+	"config": {
+		"chainId": 12345,
+		"homesteadBlock": 0,
+		"eip150Block": 0,
+		"eip155Block": 0,
+		"eip158Block": 0,
+		"byzantiumBlock": 0,
+		"constantinopleBlock": 0,
+		"petersburgBlock": 0,
+		"istanbulBlock": 0,
+		"berlinBlock": 0,
+		"londonBlock": 0,
+		"shanghaiTime": 1790237463,
+		"cancunTime": 1790237463,
+		"pragueTime": 1930025751,
+		"osakaTime": 1948211991,
+		"terminalTotalDifficulty": 0,
+		"depositContractAddress": "0x0000000000000000000000000000000000000000",
+		"blobSchedule": {
+			"cancun": {
+				"target": 3,
+				"max": 6,
+				"baseFeeUpdateFraction": 3338477
+			},
+			"prague": {
+				"target": 6,
+				"max": 9,
+				"baseFeeUpdateFraction": 5007716
+			}
+		}
+	},
+	"nonce": "0x0",
+	"timestamp": "0x6ab4db17",
+	"extraData": "0x",
+	"gasLimit": "0x1fffffffffffff",
+	"difficulty": "0x0",
+	"mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+	"coinbase": "0x0000000000000000000000000000000000000000",
+	"alloc": {
+		"f39fd6e51aad88f6f4ce6ab8827279cfffb92266": {
+			"balance": "0x10000000000000000000000000000000"
+		},
+		"fe3b557e8fb62b89f4916b721be55ceb828dbd73": {
+			"balance": "0x10000000000000000000000000000000"
+		}
+	},
+	"number": "0x0",
+	"gasUsed": "0x0",
+	"parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+	"baseFeePerGas": "0x3b9aca00",
+	"excessBlobGas": null,
+	"blobGasUsed": null,
+	"slotNumber": null
+}
