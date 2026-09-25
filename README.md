@@ -70,30 +70,38 @@ python downloader.py
 ```
 *(Ensure `geth.exe` is also placed in the project folder.)*
 
-### 4. Launch the Devnet
-Run the supervisor script:
+### 4. Choose Your Running Mode
+
+#### ⚡ Mode A: Instant On-Demand Node (Recommended for Fast Smart Contract & dApp Dev)
+No empty auto-blocks, 0 terminal spam, blocks are mined instantly (<0.1s) only when transactions arrive:
+```bash
+python run_ondemand.py
+```
+*(If you ever want to wipe data and start fresh from block 0, run: `python run_ondemand.py --reset`)*
+
+#### 🛡️ Mode B: Full Ethereum PoS Devnet (Geth + Prysm Beacon + 64 Validators)
+Simulates real Ethereum Proof-of-Stake with full Beacon consensus and 12-second slot proposing:
 ```bash
 python -u run_devnet.py
 ```
-**What this does automatically:**
-- Generates `jwt.hex` secret file.
-- Derives 64 deterministic validator keys and imports them into `validator-wallet`.
-- Generates aligned `genesis.ssz` (Consensus Layer) and `genesis.json` (Execution Layer).
-- Initializes Geth: `geth init genesis.json`.
-- Starts Geth, Beacon Node, and Validator Client.
-- Displays live block and slot advancement:
-  ```text
-  [021s] Geth EL Block: 1 | Beacon CL Slot: 1 (Proposer: 3)
-  [033s] Geth EL Block: 2 | Beacon CL Slot: 2 (Proposer: 12)
-  ...
-  ```
+*(To wipe and re-align genesis slot to current time: `python -u run_devnet.py --reset`)*
 
-### 5. Deploy & Verify Smart Contract (in a 2nd Terminal)
-Open a new terminal and run:
+### 5. Deploy Smart Contract
+In a second terminal:
 ```bash
 python deploy_and_verify.py
 ```
-This compiles `Storage.sol`, deploys it to `http://127.0.0.1:8545`, triggers a state change transaction (`set(42069)`), waits for confirmation in a PoS block, and reads back `get()`.
+This compiles `Storage.sol`, deploys it to the network, sets the value to `42069`, verifies `get()`, and saves the deployed address to `deployment_receipt.json`.
+
+### 6. Interact With Existing Deployed Contract
+You don't need to re-deploy the contract each time you want to test it! Run:
+```bash
+# Read current value from contract
+python interact.py
+
+# Send a transaction to update value (e.g., set to 8888)
+python interact.py 8888
+```
 
 ---
 

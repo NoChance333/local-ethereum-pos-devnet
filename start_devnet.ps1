@@ -38,7 +38,8 @@ $gethArgs = @(
     "--authrpc.addr", "127.0.0.1",
     "--authrpc.vhosts", "*",
     "--nodiscover",
-    "--syncmode", "full"
+    "--syncmode", "full",
+    "--gcmode", "archive"
 )
 $gethProc = Start-Process -FilePath $gethExe -ArgumentList $gethArgs -RedirectStandardOutput (Join-Path $LogsDir "geth.log") -RedirectStandardError (Join-Path $LogsDir "geth_err.log") -PassThru
 Write-Host "Started Geth (PID: $($gethProc.Id))"

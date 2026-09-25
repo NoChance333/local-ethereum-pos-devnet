@@ -152,7 +152,8 @@ def main():
         "--authrpc.addr", "127.0.0.1",
         "--authrpc.vhosts", "*",
         "--nodiscover",
-        "--syncmode", "full"
+        "--syncmode", "full",
+        "--gcmode", "archive"
     ]
     p_geth = subprocess.Popen(cmd_geth, stdout=f_geth, stderr=subprocess.STDOUT)
     time.sleep(2)

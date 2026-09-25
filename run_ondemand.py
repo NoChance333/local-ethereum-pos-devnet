@@ -70,13 +70,24 @@ def main():
         "--http.api", "eth,net,web3,personal,engine",
         "--http.port", "8545",
         "--http.addr", "127.0.0.1",
-        "--http.corsdomain", "*"
+        "--http.corsdomain", "*",
+        "--ipcdisable"
     ]
 
     p_geth = subprocess.Popen(cmd_geth, stdout=f_geth, stderr=subprocess.STDOUT)
-    time.sleep(2)
+    
+    init_block = None
+    for _ in range(15):
+        time.sleep(1)
+        b = check_rpc()
+        if b is not None:
+            init_block = b
+            time.sleep(1)
+            latest = check_rpc()
+            if latest is not None:
+                init_block = latest
+            break
 
-    init_block = check_rpc()
     print("=" * 60)
     print(f"On-Demand Node Running! PID: {p_geth.pid}")
     print("RPC Endpoint: http://127.0.0.1:8545 (Chain ID: 12345)")
@@ -100,7 +111,12 @@ def main():
                 sys.stdout.flush()
                 last_block = cur
     except KeyboardInterrupt:
-        print("\nStopping Geth node...")
+        print("\nStopping Geth node gracefully (flushing database to disk)...")
+        try:
+            p_geth.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            p_geth.terminate()
+            p_geth.wait(timeout=2)
     finally:
         if p_geth.poll() is None:
             p_geth.terminate()
